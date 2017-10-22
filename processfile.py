@@ -28,10 +28,15 @@ class Plotter:
 
     def draw_plot(self):
 
+        y2 = []
+        for i in range(len(self.counters)):
+            y2.append(self.counters[i]/(i+1))
+
         fig = plt.figure()
         pl = fig.add_subplot(111)
-        pl.plot(self.counters)
+        pl.plot(self.counters, 'o')
         pl.set_xticklabels(self.words)
+        pl.plot(y2)
 
         #plt.plot(self.words, self.counters)
         #pl.show()
