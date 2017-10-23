@@ -1,1 +1,3 @@
 matplotlib required
+numpy required
+scipy required
