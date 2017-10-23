@@ -1,6 +1,7 @@
-import re
 from collections import Counter
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.interpolate import interp1d
 import string
 
 class ProcessFile:
@@ -12,6 +13,7 @@ class ProcessFile:
     def strip_string(self):
         translator = str.maketrans('', '', string.punctuation + '\u2013')
         self.stripped_string = self.string_in.translate(translator)
+        self.stripped_string = self.stripped_string.lower()
     def count_words(self):
         self.words = self.stripped_string.split()
         self.counted_words = Counter(self.words)
@@ -33,23 +35,23 @@ class Plotter:
     
     def draw_plot(self):
 
-        xticks = self.words
+        #x_data = np.arange(0, len(self.words), 0.1 )
+        x_data = np.linspace(0, 20, num=100, endpoint=True)
+        
         y2 = []
-        for i in range(100):
+        for i in range(len(x_data)):
             y2.append(self.counters[0]/(i+1))
-        plt.figure(1)
-        plt.subplot(211)
-        plt.plot(self.words, self.counters, 'o')
+        f = interp1d(x_data, y2, kind='cubic')
+        plt.plot(self.counters, 'o', label="Number of occurences")
+        plt.plot(x_data, y2, label="Number of occurences according to Zipf Law")
+        plt.xticks(range(len(self.words)), self.words, rotation=50, horizontalalignment='right')
+        plt.xlabel('First 20 words')
+        plt.ylabel('Number of appearance of each word')
+        plt.title("Top 20 most common words")
+        plt.legend()
+        plt.savefig("out.png")
         plt.show()
-        """
-        fig = plt.figure()
-        pl = fig.add_subplot(111)
-        pl.plot(self.counters, 'o')
-        pl.set_xticklabels(self.words)
-        fig.savefig("out.png")
-
-        fig.show()
-        """
+        
 f = ProcessFile("plik.txt")
 f.strip_string()
 plot = Plotter(f.count_words())
