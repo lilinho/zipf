@@ -6,12 +6,12 @@ import string
 class ProcessFile:
 
     def __init__(self, name):
-        self.file = open(name, 'r')
-        self.string = self.file.read()
+        self.file = open(name, 'r', encoding="utf-8")
+        self.string_in = self.file.read()
+        self.file.close()
     def strip_string(self):
-        #self.stripped_string = re.sub('[^A-Za-z0-9- ]+', ' ', self.string, re.UNICODE)
-        #self.stripped_string = re.sub('[-', ' ', self.string, re.UNICODE)
-        self.stripped_string = self.string.translate(string.punctuation)
+        translator = str.maketrans('', '', string.punctuation + '\u2013')
+        self.stripped_string = self.string_in.translate(translator)
     def count_words(self):
         self.words = self.stripped_string.split()
         self.counted_words = Counter(self.words)
@@ -37,17 +37,19 @@ class Plotter:
         y2 = []
         for i in range(100):
             y2.append(self.counters[0]/(i+1))
-
+        plt.figure(1)
+        plt.subplot(211)
+        plt.plot(self.words, self.counters, 'o')
+        plt.show()
+        """
         fig = plt.figure()
         pl = fig.add_subplot(111)
         pl.plot(self.counters, 'o')
         pl.set_xticklabels(self.words)
-        #pl.plot(y2)
-        print(self.words)
         fig.savefig("out.png")
 
         fig.show()
-        
+        """
 f = ProcessFile("plik.txt")
 f.strip_string()
 plot = Plotter(f.count_words())
